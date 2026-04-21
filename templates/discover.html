@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Discover · Nwety{% endblock %}
+{% block body %}
+<div class="topbar">
+    <div>
+        <h1>Discover</h1>
+        <div class="who">Your daily learning</div>
+    </div>
+    <a href="/" style="color: var(--text-muted); font-size: 13px;">Switch</a>
+</div>
+
+<div class="discover" id="discover">
+    <div class="empty"><p>Loading…</p></div>
+</div>
+
+<div class="bottom-nav">
+    <a href="/chat/{{ user_id }}">Chat</a>
+    <a href="/discover/{{ user_id }}" class="active">Discover</a>
+</div>
+
+<script>
+window.CURRENT_USER_ID = {{ user_id }};
+</script>
+<script src="/static/js/speech.js"></script>
+<script src="/static/js/discover.js"></script>
+{% endblock %}

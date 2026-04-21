@@ -1,0 +1,22 @@
+[
+  {"word": "post", "translation": "publicação", "pronunciation_hint": "POHST", "example_sentence": "I'll post a photo later.", "example_translation": "Vou publicar uma foto mais tarde.", "theme": "social media"},
+  {"word": "follow", "translation": "seguir", "pronunciation_hint": "FOL-oh", "example_sentence": "Follow me back please.", "example_translation": "Segue-me de volta, por favor.", "theme": "social media"},
+  {"word": "story", "translation": "história", "pronunciation_hint": "STOR-ee", "example_sentence": "Did you see my story?", "example_translation": "Viste a minha história?", "theme": "social media"},
+  {"word": "caption", "translation": "legenda", "pronunciation_hint": "KAP-shun", "example_sentence": "I need a good caption.", "example_translation": "Preciso de uma boa legenda.", "theme": "social media"},
+  {"word": "budget", "translation": "orçamento", "pronunciation_hint": "BUH-jit", "example_sentence": "I must stick to my budget.", "example_translation": "Tenho de cumprir o meu orçamento.", "theme": "accounting"},
+  {"word": "save", "translation": "poupar", "pronunciation_hint": "SAYV", "example_sentence": "I save money every month.", "example_translation": "Poupo dinheiro todos os meses.", "theme": "money"},
+  {"word": "spend", "translation": "gastar", "pronunciation_hint": "SPEND", "example_sentence": "Don't spend it all.", "example_translation": "Não gastes tudo.", "theme": "money"},
+  {"word": "account", "translation": "conta", "pronunciation_hint": "uh-KOWNT", "example_sentence": "Open a bank account.", "example_translation": "Abre uma conta bancária.", "theme": "accounting"},
+  {"word": "income", "translation": "rendimento", "pronunciation_hint": "IN-kum", "example_sentence": "My income is stable.", "example_translation": "O meu rendimento é estável.", "theme": "accounting"},
+  {"word": "brother", "translation": "irmão", "pronunciation_hint": "BRUH-ther", "example_sentence": "He is my brother.", "example_translation": "Ele é o meu irmão.", "theme": "family"},
+  {"word": "miss", "translation": "sentir a falta", "pronunciation_hint": "MIS", "example_sentence": "I miss you.", "example_translation": "Sinto a tua falta.", "theme": "family"},
+  {"word": "together", "translation": "juntos", "pronunciation_hint": "tuh-GETH-er", "example_sentence": "We'll be together soon.", "example_translation": "Em breve estaremos juntos.", "theme": "family"},
+  {"word": "favourite", "translation": "favorito", "pronunciation_hint": "FAY-vrit", "example_sentence": "What's your favourite song?", "example_translation": "Qual é a tua canção favorita?", "theme": "everyday"},
+  {"word": "weekend", "translation": "fim de semana", "pronunciation_hint": "WEEK-end", "example_sentence": "Happy weekend!", "example_translation": "Bom fim de semana!", "theme": "everyday"},
+  {"word": "tired", "translation": "cansado", "pronunciation_hint": "TYE-urd", "example_sentence": "I'm really tired today.", "example_translation": "Estou muito cansado hoje.", "theme": "everyday"},
+  {"word": "hungry", "translation": "com fome", "pronunciation_hint": "HUNG-gree", "example_sentence": "Are you hungry?", "example_translation": "Tens fome?", "theme": "everyday"},
+  {"word": "happy", "translation": "feliz", "pronunciation_hint": "HAP-ee", "example_sentence": "I'm happy to see you.", "example_translation": "Estou feliz por te ver.", "theme": "feelings"},
+  {"word": "proud", "translation": "orgulhoso", "pronunciation_hint": "PROWD", "example_sentence": "I'm proud of you.", "example_translation": "Estou orgulhoso de ti.", "theme": "feelings"},
+  {"word": "worried", "translation": "preocupado", "pronunciation_hint": "WUR-eed", "example_sentence": "Don't be worried.", "example_translation": "Não fiques preocupada.", "theme": "feelings"},
+  {"word": "lucky", "translation": "com sorte", "pronunciation_hint": "LUK-ee", "example_sentence": "You're lucky!", "example_translation": "Tens sorte!", "theme": "feelings"}
+]

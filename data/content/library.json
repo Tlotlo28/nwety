@@ -1,0 +1,33 @@
+{
+  "shows_for_nwety": [
+    {"title": "Friends", "description": "Classic American sitcom with clear, conversational English. Perfect for picking up everyday phrases.", "level": "intermediate", "where": "Netflix / HBO Max"},
+    {"title": "Peppa Pig (English)", "description": "Short episodes, simple vocabulary, very clearly pronounced. Don't feel embarrassed — loads of adult English learners use it.", "level": "beginner", "where": "YouTube"},
+    {"title": "The Crown", "description": "Beautiful British English. Slower-paced dialogue with rich vocabulary.", "level": "advanced", "where": "Netflix"},
+    {"title": "Trevor Noah stand-up specials", "description": "South African English with clear delivery — and he speaks some Portuguese too!", "level": "intermediate", "where": "Netflix / YouTube"},
+    {"title": "Extra English", "description": "A sitcom specifically designed for English learners.", "level": "beginner", "where": "YouTube (free)"}
+  ],
+  "shows_for_you": [
+    {"title": "3% (Netflix original)", "description": "Brazilian dystopian sci-fi — excellent Portuguese, though Brazilian accent.", "level": "intermediate", "where": "Netflix"},
+    {"title": "Glória", "description": "Portuguese spy thriller set during the Cold War — European Portuguese, same variant as Mozambique.", "level": "advanced", "where": "Netflix"},
+    {"title": "RTP Play (rtp.pt)", "description": "Portugal's public broadcaster — tons of free European Portuguese content including news, which is the clearest pronunciation you'll find.", "level": "all levels", "where": "rtp.pt (free)"},
+    {"title": "Portuguese With Leo (YouTube)", "description": "A Portuguese guy teaching European Portuguese with subtitles — start here.", "level": "beginner", "where": "YouTube (free)"},
+    {"title": "Easy Portuguese (YouTube)", "description": "Street interviews with subtitles in Portuguese and English. Real, casual speech.", "level": "beginner to intermediate", "where": "YouTube (free)"}
+  ],
+  "tips_english": [
+    "English stress usually falls on the first syllable of a word. Say TA-ble, not ta-BLE.",
+    "The 'th' sound doesn't exist in Portuguese — put your tongue between your teeth. Practice with 'think' and 'this'.",
+    "English has no grammatical gender. 'The' is just 'the' — no o/a, um/uma. This is one less thing to worry about.",
+    "We use 'do' / 'does' to form questions: 'Do you like music?' — Portuguese doesn't do this, so it feels weird at first.",
+    "Contractions (I'm, you're, don't) sound more natural than the full forms in conversation.",
+    "When in doubt, add '-ing' for ongoing actions: 'I am learning' instead of 'I learn'."
+  ],
+  "tips_portuguese": [
+    "European Portuguese swallows vowels — 'pequeno' sounds more like 'pkenu'. Don't worry, this is normal.",
+    "Nouns have gender: 'o livro' (the book, masculine), 'a casa' (the house, feminine). Learn the article with the noun.",
+    "'Tu' is informal 'you' (used with family and friends — use it with Nwety). 'Você' is more formal.",
+    "Verbs change based on who's doing the action: eu amo, tu amas, ele ama. Memorise verbs in groups, not alone.",
+    "'Ch' sounds like English 'sh': 'chave' is 'SHAH-veh'.",
+    "'Saudade' has no exact English translation — it's a mix of longing, missing someone, and nostalgia all at once. It's a beautifully Portuguese concept.",
+    "Mozambican Portuguese uses some unique words: 'machimbombo' for bus, 'bazar' for to leave quickly. Standard European Portuguese is understood everywhere though."
+  ]
+}

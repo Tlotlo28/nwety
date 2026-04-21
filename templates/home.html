@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{ app_name }}{% endblock %}
+{% block body %}
+<div class="home">
+    <h1>{{ app_name }}</h1>
+
+    <div class="intro">
+        <p>A little space for you and your sister to talk, and to learn each other's language while you're at it.</p>
+        <p lang="pt">Um cantinho para ti e o teu irmão conversarem, e aprenderem a língua um do outro pelo caminho.</p>
+    </div>
+
+    <div class="user-picker" id="user-picker">
+        <p style="text-align: center; color: var(--text-muted);">Loading…</p>
+    </div>
+</div>
+
+<script>
+(async () => {
+    const res = await fetch('/api/users');
+    const users = await res.json();
+    const picker = document.getElementById('user-picker');
+    picker.innerHTML = '';
+    users.forEach((u, i) => {
+        const initial = u.name[0].toUpperCase();
+        const langLabel = u.language === 'en' ? 'English speaker' : 'Portuguese speaker';
+        const avatarClass = i === 1 ? 'user-avatar accent' : 'user-avatar';
+        const card = document.createElement('a');
+        card.href = `/chat/${u.id}`;
+        card.className = 'user-card';
+        card.innerHTML = `
+            <div class="${avatarClass}">${initial}</div>
+            <div class="user-info">
+                <strong>${u.name}</strong>
+                <span>${langLabel}</span>
+            </div>
+            <span style="color: var(--text-faint);">→</span>
+        `;
+        picker.appendChild(card);
+    });
+})();
+</script>
+{% endblock %}

@@ -14,10 +14,15 @@ python-dotenv==1.0.1
 pydantic-settings==2.6.1
 
 # --- Translation & NLP ---
+# torch is pinned to the CPU-only build in Render's build command (see render.yaml).
+# Locally, install it with:
+#   pip install torch==2.4.1 --index-url https://download.pytorch.org/whl/cpu
 argostranslate==1.9.6
 spacy==3.8.2
+stanza==1.1.1
+torch==2.4.1
 
-# --- Dev tools (optional but recommended) ---
+# --- Dev tools ---
 ruff==0.7.4
 pytest==8.3.3
 pytest-asyncio==0.24.0

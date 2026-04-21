@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Chat · Nwety{% endblock %}
+{% block body %}
+<div class="topbar">
+    <div>
+        <h1>Nwety</h1>
+        <div class="who" id="who-label">…</div>
+    </div>
+    <a href="/" style="color: var(--text-muted); font-size: 13px;">Switch</a>
+</div>
+
+<div class="chat">
+    <div class="messages" id="messages">
+        <div class="empty">
+            <h3>Say hello</h3>
+            <p>Whatever you type will be translated instantly.</p>
+        </div>
+    </div>
+
+    <div class="composer">
+        <button class="mic" id="mic-btn" title="Speak instead of typing" aria-label="Record voice"></button>
+        <textarea id="text-input" rows="1" placeholder="Type in your language…"></textarea>
+        <button class="send" id="send-btn" aria-label="Send message"></button>
+    </div>
+</div>
+
+<div class="bottom-nav">
+    <a href="/chat/{{ user_id }}" class="active">Chat</a>
+    <a href="/discover/{{ user_id }}">Discover</a>
+</div>
+
+<script>
+window.CURRENT_USER_ID = Number("{{ user_id }}");
+</script>
+<script src="/static/js/speech.js"></script>
+<script src="/static/js/chat.js"></script>
+{% endblock %}

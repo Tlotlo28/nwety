@@ -1,0 +1,22 @@
+[
+  {"word": "música", "translation": "music", "pronunciation_hint": "MOO-zee-ka", "example_sentence": "Adoro esta música.", "example_translation": "I love this song.", "theme": "music"},
+  {"word": "jogo", "translation": "game", "pronunciation_hint": "ZHO-goo", "example_sentence": "Queres jogar um jogo?", "example_translation": "Want to play a game?", "theme": "gaming"},
+  {"word": "ouvir", "translation": "to listen / to hear", "pronunciation_hint": "oh-VEER", "example_sentence": "Gosto de ouvir música à noite.", "example_translation": "I like listening to music at night.", "theme": "music"},
+  {"word": "ganhar", "translation": "to win", "pronunciation_hint": "gun-YAHR", "example_sentence": "Vamos ganhar este jogo.", "example_translation": "We're going to win this game.", "theme": "gaming"},
+  {"word": "perder", "translation": "to lose", "pronunciation_hint": "per-DAIR", "example_sentence": "Não quero perder.", "example_translation": "I don't want to lose.", "theme": "gaming"},
+  {"word": "irmã", "translation": "sister", "pronunciation_hint": "eer-MAH", "example_sentence": "A minha irmã mora em Moçambique.", "example_translation": "My sister lives in Mozambique.", "theme": "family"},
+  {"word": "pai", "translation": "father / dad", "pronunciation_hint": "PYE", "example_sentence": "O meu pai está bem.", "example_translation": "My dad is well.", "theme": "family"},
+  {"word": "saudade", "translation": "a deep longing / missing someone", "pronunciation_hint": "sow-DAH-de", "example_sentence": "Tenho saudades tuas.", "example_translation": "I miss you (literally: I have longing for you).", "theme": "family"},
+  {"word": "obrigado", "translation": "thank you (male speaker)", "pronunciation_hint": "oh-bree-GAH-doo", "example_sentence": "Obrigado pela ajuda.", "example_translation": "Thanks for the help.", "theme": "everyday"},
+  {"word": "obrigada", "translation": "thank you (female speaker)", "pronunciation_hint": "oh-bree-GAH-da", "example_sentence": "Obrigada pelo presente.", "example_translation": "Thanks for the gift.", "theme": "everyday"},
+  {"word": "fixe", "translation": "cool / nice (European Portuguese slang)", "pronunciation_hint": "FEESH", "example_sentence": "Esse jogo é muito fixe!", "example_translation": "That game is really cool!", "theme": "slang"},
+  {"word": "bué", "translation": "a lot (Mozambican / Angolan Portuguese)", "pronunciation_hint": "BWEH", "example_sentence": "Gosto bué desta música.", "example_translation": "I really like this song a lot.", "theme": "slang"},
+  {"word": "comer", "translation": "to eat", "pronunciation_hint": "koo-MAIR", "example_sentence": "Já comeste?", "example_translation": "Have you eaten?", "theme": "everyday"},
+  {"word": "dormir", "translation": "to sleep", "pronunciation_hint": "door-MEER", "example_sentence": "Vou dormir cedo.", "example_translation": "I'm going to sleep early.", "theme": "everyday"},
+  {"word": "amanhã", "translation": "tomorrow", "pronunciation_hint": "ah-mun-YAH", "example_sentence": "Falamos amanhã.", "example_translation": "We'll talk tomorrow.", "theme": "time"},
+  {"word": "agora", "translation": "now", "pronunciation_hint": "ah-GOH-ra", "example_sentence": "Vem agora!", "example_translation": "Come now!", "theme": "time"},
+  {"word": "feliz", "translation": "happy", "pronunciation_hint": "feh-LEESH", "example_sentence": "Estou feliz por ter uma irmã.", "example_translation": "I'm happy to have a sister.", "theme": "feelings"},
+  {"word": "cansado", "translation": "tired (male)", "pronunciation_hint": "kun-SAH-doo", "example_sentence": "Estou muito cansado.", "example_translation": "I'm very tired.", "theme": "feelings"},
+  {"word": "saudável", "translation": "healthy", "pronunciation_hint": "sow-DAH-vel", "example_sentence": "Come algo saudável.", "example_translation": "Eat something healthy.", "theme": "everyday"},
+  {"word": "família", "translation": "family", "pronunciation_hint": "fa-MEE-lee-a", "example_sentence": "A família é tudo.", "example_translation": "Family is everything.", "theme": "family"}
+]
