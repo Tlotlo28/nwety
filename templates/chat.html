@@ -6,14 +6,14 @@
         <h1>Nwety</h1>
         <div class="who" id="who-label">…</div>
     </div>
-    <a href="/" style="color: var(--text-muted); font-size: 13px;">Switch</a>
+    <a href="/" style="color: var(--text-muted); font-size: 13px;" id="switch-link">Switch</a>
 </div>
 
 <div class="chat">
     <div class="messages" id="messages">
-        <div class="empty">
-            <h3>Say hello</h3>
-            <p>Whatever you type will be translated instantly.</p>
+        <div class="empty" id="empty-state">
+            <h3 id="empty-title">Say hello</h3>
+            <p id="empty-sub">Whatever you type will be translated instantly.</p>
         </div>
     </div>
 
@@ -25,8 +25,8 @@
 </div>
 
 <div class="bottom-nav">
-    <a href="/chat/{{ user_id }}" class="active">Chat</a>
-    <a href="/discover/{{ user_id }}">Discover</a>
+    <a href="/chat/{{ user_id }}" class="active" id="nav-chat">Chat</a>
+    <a href="/discover/{{ user_id }}" id="nav-discover">Discover</a>
 </div>
 
 <script>

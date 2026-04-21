@@ -21,3 +21,14 @@ Thumbs.db
 
 # Project data (models are re-downloaded, don't commit them)
 argos-translate-data/
+
+# Argos model cache (these get downloaded fresh on each Render deploy)
+.local/
+argos-translate-data/
+
+# Render
+.render/
+
+# OS
+.DS_Store
+Thumbs.db

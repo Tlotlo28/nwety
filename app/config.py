@@ -1,5 +1,7 @@
 """Application configuration loaded from environment variables."""
+import os
 from functools import lru_cache
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -19,8 +21,16 @@ class Settings(BaseSettings):
     user_two_name: str = "Nwety"
     user_two_language: str = "pt"
 
+    # Deployment
+    host: str = "127.0.0.1"
+    port: int = 8000
+
+    @property
+    def is_production(self) -> bool:
+        """True when running on Render (or any host that sets PORT)."""
+        return bool(os.getenv("PORT"))
+
 
 @lru_cache
 def get_settings() -> Settings:
-    """Return cached settings instance (loaded once per process)."""
     return Settings()

@@ -19,15 +19,47 @@ if (window.Icons) {
     sendBtn.textContent = 'Send';
 }
 
+const CHAT_LABELS = {
+    en: {
+        who: (me, other) => `You're ${me} — chatting with ${other}`,
+        switch: "Switch",
+        chat: "Chat",
+        discover: "Discover",
+        emptyTitle: "Say hello",
+        emptySub: "Whatever you type will be translated instantly.",
+        placeholder: "Type in English…",
+        sendErr: "Could not send — check your connection.",
+    },
+    pt: {
+        who: (me, other) => `És a ${me} — a conversar com ${other}`,
+        switch: "Trocar",
+        chat: "Conversa",
+        discover: "Descobrir",
+        emptyTitle: "Diz olá",
+        emptySub: "O que escreveres será traduzido na hora.",
+        placeholder: "Escreve em português…",
+        sendErr: "Não foi possível enviar — verifica a tua ligação.",
+    },
+};
+let LBL = CHAT_LABELS.en;
+
 async function loadUsers() {
     const res = await fetch('/api/users');
     const users = await res.json();
     currentUser = users.find(u => u.id === userId);
     otherUser = users.find(u => u.id !== userId);
-    whoLabel.textContent = `You're ${currentUser.name} — chatting with ${otherUser.name}`;
-    textInput.placeholder = currentUser.language === 'pt'
-        ? 'Escreve em português…'
-        : 'Type in English…';
+    LBL = CHAT_LABELS[currentUser.language] || CHAT_LABELS.en;
+
+    whoLabel.textContent = LBL.who(currentUser.name, otherUser.name);
+    textInput.placeholder = LBL.placeholder;
+    document.getElementById('switch-link').textContent = LBL.switch;
+    document.getElementById('nav-chat').textContent = LBL.chat;
+    document.getElementById('nav-discover').textContent = LBL.discover;
+
+    const emptyTitle = document.getElementById('empty-title');
+    const emptySub = document.getElementById('empty-sub');
+    if (emptyTitle) emptyTitle.textContent = LBL.emptyTitle;
+    if (emptySub) emptySub.textContent = LBL.emptySub;
 }
 
 function formatTime(iso) {
@@ -72,7 +104,18 @@ function renderMessage(m) {
         <div class="breakdown-panel"></div>
         <div class="time">${formatTime(m.created_at)}</div>
     `;
-
+    const CHAT_LABELS = {
+    en: {
+        // ... existing keys
+        breakingDown: "Breaking it down…",
+        breakdownErr: "Could not load breakdown.",
+    },
+    pt: {
+        // ... existing keys
+        breakingDown: "A explicar…",
+        breakdownErr: "Não foi possível explicar a frase.",
+    },
+};
     const speakText = isMine ? m.translated_text : m.original_text;
     const speakLang = isMine ? m.translated_language : m.original_language;
     div.querySelector('.speak').onclick = () => Speech.speak(speakText, speakLang);
@@ -84,14 +127,14 @@ function renderMessage(m) {
             panel.classList.remove('open');
             return;
         }
-        panel.innerHTML = '<em style="color: var(--text-muted); font-size: 13px;">Breaking it down…</em>';
+        panel.innerHTML = `<em style="color: var(--text-muted); font-size: 13px;">${LBL.breakingDown}</em>`;
         panel.classList.add('open');
         try {
             const res = await fetch(`/api/chat/messages/${m.id}/breakdown?which=${whichForBreakdown}`);
             const data = await res.json();
             panel.innerHTML = renderBreakdownTokens(data.tokens);
         } catch {
-            panel.innerHTML = '<em style="color: var(--amber); font-size: 13px;">Could not load breakdown.</em>';
+            panel.innerHTML = `<em style="color: var(--amber); font-size: 13px;">${LBL.breakdownErr}</em>`;
         }
     };
 
@@ -110,9 +153,9 @@ async function loadMessages() {
     if (messages.length === 0) {
         if (renderedIds.size === 0) {
             messagesEl.innerHTML = `
-                <div class="empty">
-                    <h3>Say hello</h3>
-                    <p>Whatever you type will be translated instantly.</p>
+                <div class="empty" id="empty-state">
+                    <h3>${LBL.emptyTitle}</h3>
+                    <p>${LBL.emptySub}</p>
                 </div>`;
         }
         return;
@@ -155,7 +198,7 @@ async function sendMessage() {
         textInput.value = '';
         textInput.style.height = 'auto';
     } catch {
-        alert('Could not send — check your connection.');
+        alert(LBL.sendErr);
     } finally {
         sendBtn.disabled = false;
         sendBtn.classList.remove('sending');

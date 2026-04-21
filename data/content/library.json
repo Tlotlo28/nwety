@@ -6,6 +6,13 @@
     {"title": "Trevor Noah stand-up specials", "description": "South African English with clear delivery — and he speaks some Portuguese too!", "level": "intermediate", "where": "Netflix / YouTube"},
     {"title": "Extra English", "description": "A sitcom specifically designed for English learners.", "level": "beginner", "where": "YouTube (free)"}
   ],
+  "shows_for_nwety_pt": [
+    {"title": "Friends", "description": "Sitcom americana clássica, com inglês do dia-a-dia e diálogos claros. Óptima para apanhar frases úteis.", "level": "intermédio", "where": "Netflix / HBO Max"},
+    {"title": "Peppa Pig (em inglês)", "description": "Episódios curtos, vocabulário simples e pronúncia muito clara. Não tenhas vergonha — muitos adultos aprendem inglês assim.", "level": "iniciante", "where": "YouTube"},
+    {"title": "The Crown", "description": "Inglês britânico bonito, com diálogos mais calmos e vocabulário rico.", "level": "avançado", "where": "Netflix"},
+    {"title": "Especiais do Trevor Noah", "description": "Inglês sul-africano com entrega muito clara — e ele até fala um bocadinho de português!", "level": "intermédio", "where": "Netflix / YouTube"},
+    {"title": "Extra English", "description": "Uma sitcom feita especialmente para quem está a aprender inglês.", "level": "iniciante", "where": "YouTube (grátis)"}
+  ],
   "shows_for_you": [
     {"title": "3% (Netflix original)", "description": "Brazilian dystopian sci-fi — excellent Portuguese, though Brazilian accent.", "level": "intermediate", "where": "Netflix"},
     {"title": "Glória", "description": "Portuguese spy thriller set during the Cold War — European Portuguese, same variant as Mozambique.", "level": "advanced", "where": "Netflix"},
@@ -20,6 +27,14 @@
     "We use 'do' / 'does' to form questions: 'Do you like music?' — Portuguese doesn't do this, so it feels weird at first.",
     "Contractions (I'm, you're, don't) sound more natural than the full forms in conversation.",
     "When in doubt, add '-ing' for ongoing actions: 'I am learning' instead of 'I learn'."
+  ],
+  "tips_english_pt": [
+    "Em inglês, a tónica cai quase sempre na primeira sílaba. Diz TA-ble, não ta-BLE.",
+    "O som 'th' não existe em português — põe a ponta da língua entre os dentes. Pratica com 'think' e 'this'.",
+    "O inglês não tem género gramatical. 'The' é sempre 'the' — não há o/a, um/uma. Menos uma coisa para te preocupares!",
+    "Usamos 'do' / 'does' para fazer perguntas: 'Do you like music?' — em português não funciona assim, por isso estranha-se no início.",
+    "As contrações (I'm, you're, don't) soam mais naturais do que as formas completas na conversa.",
+    "Na dúvida, acrescenta '-ing' para acções em curso: 'I am learning' em vez de 'I learn'."
   ],
   "tips_portuguese": [
     "European Portuguese swallows vowels — 'pequeno' sounds more like 'pkenu'. Don't worry, this is normal.",

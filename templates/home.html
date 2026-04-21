@@ -12,6 +12,28 @@
     <div class="user-picker" id="user-picker">
         <p style="text-align: center; color: var(--text-muted);">Loading…</p>
     </div>
+
+    <button class="welcome-btn" id="welcome-btn">For Nwety · Para a Nwety</button>
+
+    <div class="welcome-modal" id="welcome-modal" hidden>
+        <div class="welcome-card">
+            <button class="welcome-close" id="welcome-close" aria-label="Close">×</button>
+            <h2 lang="pt">Bem-vinda, Nwety</h2>
+            <p lang="pt">Este espaço foi feito com carinho, para nós dois podermos falar sem o problema do idioma.</p>
+            <p lang="pt"><strong>Como funciona:</strong></p>
+            <ul lang="pt">
+                <li>Escreve em português, como sempre falas.</li>
+                <li>A aplicação traduz automaticamente para inglês para eu ler.</li>
+                <li>Quando eu te escrever em inglês, vais receber a mensagem em português também.</li>
+                <li>Toca em <em>"Ouvir"</em> para escutar a pronúncia — é assim que aprendemos a falar certo.</li>
+                <li>Toca em <em>"Explicar"</em> para ver cada palavra explicada.</li>
+                <li>Na secção <em>Descobrir</em>, tens a palavra do dia e dicas para aprender inglês.</li>
+            </ul>
+            <p lang="pt">Não tenhas medo de errar — é assim que se aprende. Estou aqui contigo. 💛</p>
+            <hr>
+            <p class="en-translation"><em>(In English: Welcome message for Nwety explaining how the app works and encouraging her to use it without fear of mistakes.)</em></p>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -22,7 +44,7 @@
     picker.innerHTML = '';
     users.forEach((u, i) => {
         const initial = u.name[0].toUpperCase();
-        const langLabel = u.language === 'en' ? 'English speaker' : 'Portuguese speaker';
+        const langLabel = u.language === 'en' ? 'English speaker' : 'Fala português';
         const avatarClass = i === 1 ? 'user-avatar accent' : 'user-avatar';
         const card = document.createElement('a');
         card.href = `/chat/${u.id}`;
@@ -37,6 +59,11 @@
         `;
         picker.appendChild(card);
     });
+
+    const modal = document.getElementById('welcome-modal');
+    document.getElementById('welcome-btn').onclick = () => modal.hidden = false;
+    document.getElementById('welcome-close').onclick = () => modal.hidden = true;
+    modal.onclick = (e) => { if (e.target === modal) modal.hidden = true; };
 })();
 </script>
 {% endblock %}

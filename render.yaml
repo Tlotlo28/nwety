@@ -1,0 +1,35 @@
+# Render blueprint for Nwety
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: nwety
+    runtime: python
+    region: frankfurt  # closest Render region to Mozambique / South Africa
+    plan: free
+    pythonVersion: "3.11"
+    buildCommand: |
+      pip install --upgrade pip
+      pip install torch==2.4.1 --index-url https://download.pytorch.org/whl/cpu
+      pip install -r requirements.txt
+      python -m spacy download en_core_web_sm
+      python -m spacy download pt_core_news_sm
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        value: sqlite+aiosqlite:////tmp/nwety.db
+      - key: USER_ONE_NAME
+        sync: false  # prompt to set this in the Render dashboard
+      - key: USER_ONE_LANGUAGE
+        value: en
+      - key: USER_TWO_NAME
+        value: Nwety
+      - key: USER_TWO_LANGUAGE
+        value: pt
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PYTHONUNBUFFERED
+        value: "1"

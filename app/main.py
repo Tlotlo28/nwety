@@ -3,6 +3,8 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.trustedhost import TrustedHostMiddleware
 from sqlalchemy import select
 
 from app.config import get_settings
@@ -13,6 +15,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi import Request
 from fastapi.responses import HTMLResponse
+import os
 
 settings = get_settings()
 
@@ -41,6 +44,24 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(title=settings.app_name, lifespan=lifespan)
+# Allow any host in development; tighten in production via RENDER_EXTERNAL_HOSTNAME
+_allowed_hosts = ["*"] if settings.debug else [
+     os.getenv("RENDER_EXTERNAL_HOSTNAME", "*"),
+    "localhost",
+    "127.0.0.1",
+]
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=_allowed_hosts)
+
+# CORS — permissive here because the frontend and backend are the same origin.
+# Kept explicit so that if you ever split them (e.g. a separate React frontend),
+# you only change this one block.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
+)
 
 BASE_DIR = Path(__file__).parent.parent
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
@@ -64,7 +85,15 @@ async def list_users():
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "app": settings.app_name}
+    """Deep health check — confirms the translation engine is loaded."""
+    from app.services import translator
+    try:
+        # Cheap round-trip. If this works, everything downstream works.
+        sample = translator.translate("hello", "en", "pt")
+        ready = bool(sample)
+    except Exception as exc:  # noqa: BLE001
+        return {"status": "degraded", "app": settings.app_name, "error": str(exc)}
+    return {"status": "ok", "app": settings.app_name, "translator_ready": ready}
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):

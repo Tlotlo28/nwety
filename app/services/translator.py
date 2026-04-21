@@ -1,11 +1,15 @@
-"""Translation and language breakdown service."""
 from __future__ import annotations
 
+import logging
 from functools import lru_cache
 
+import argostranslate.package
 import argostranslate.translate
 import spacy
 from spacy.language import Language
+
+log = logging.getLogger(__name__)
+
 
 _nlp_models: dict[str, Language] = {
     "en": spacy.load("en_core_web_sm"),
@@ -29,6 +33,32 @@ POS_LABELS_PT = {
     "SYM": "símbolo", "X": "outro", "SPACE": "espaço",
 }
 
+def _ensure_argos_packages() -> None:
+    """Install the en↔pt language packs if they aren't already.
+
+    Runs once at module import. On Render's fresh filesystem this triggers a
+    one-time download (~200 MB). On subsequent starts it's instant.
+    """
+    installed = {
+        (p.from_code, p.to_code)
+        for p in argostranslate.package.get_installed_packages()
+    }
+    needed = {("en", "pt"), ("pt", "en")}
+    missing = needed - installed
+    if not missing:
+        return
+
+    log.info("Installing missing Argos language packs: %s", missing)
+    argostranslate.package.update_package_index()
+    available = argostranslate.package.get_available_packages()
+    for pkg in available:
+        if (pkg.from_code, pkg.to_code) in missing:
+            path = pkg.download()
+            argostranslate.package.install_from_path(path)
+            log.info("Installed %s -> %s", pkg.from_code, pkg.to_code)
+
+
+_ensure_argos_packages()
 
 @lru_cache(maxsize=5000)
 def _translate_cached(text: str, from_code: str, to_code: str) -> str:
