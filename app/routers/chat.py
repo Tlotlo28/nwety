@@ -8,6 +8,8 @@ from app.models.message import Message
 from app.models.user import User
 from app.schemas.chat import MessageIn, MessageOut
 from app.services import translator
+from datetime import datetime, timezone
+from sqlalchemy import func, update
 
 router = APIRouter(prefix="/api/chat", tags=["chat"])
 
@@ -75,3 +77,37 @@ async def get_breakdown(
     else:
         text, lang = message.translated_text, message.translated_language
     return {"tokens": translator.break_down(text, lang)}
+
+@router.get("/unread-counts")
+async def unread_counts(db: AsyncSession = Depends(get_session)):
+    """Return how many unread messages each user has, keyed by user id."""
+    result = await db.execute(
+        select(Message.sender_id, func.count(Message.id))
+        .where(Message.read_at.is_(None))
+        .group_by(Message.sender_id)
+    )
+    by_sender = {row[0]: row[1] for row in result.all()}
+
+    users = (await db.execute(select(User))).scalars().all()
+    return {
+        str(u.id): sum(c for sender_id, c in by_sender.items() if sender_id != u.id)
+        for u in users
+    }
+
+
+@router.post("/mark-read/{user_id}")
+async def mark_messages_read(user_id: int, db: AsyncSession = Depends(get_session)):
+    """Called when a user opens the chat — marks all messages from the OTHER
+    user as read."""
+    user = await db.get(User, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    now = datetime.now(timezone.utc)
+    await db.execute(
+        update(Message)
+        .where(Message.sender_id != user_id, Message.read_at.is_(None))
+        .values(read_at=now)
+    )
+    await db.commit()
+    return {"status": "ok", "marked_at": now.isoformat()}

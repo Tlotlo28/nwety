@@ -18,39 +18,50 @@
     <div class="welcome-modal" id="welcome-modal" hidden>
         <div class="welcome-card">
             <button class="welcome-close" id="welcome-close" aria-label="Close">×</button>
-            <h2 lang="pt">Bem-vinda, Nwety</h2>
+            <h2 lang="pt">Bem-vinda, Nwety 💛</h2>
             <p lang="pt">Este espaço foi feito com carinho, para nós dois podermos falar sem o problema do idioma.</p>
             <p lang="pt"><strong>Como funciona:</strong></p>
             <ul lang="pt">
                 <li>Escreve em português, como sempre falas.</li>
                 <li>A aplicação traduz automaticamente para inglês para eu ler.</li>
                 <li>Quando eu te escrever em inglês, vais receber a mensagem em português também.</li>
-                <li>Toca em <em>"Ouvir"</em> para escutar a pronúncia — é assim que aprendemos a falar certo.</li>
+                <li>Toca em <em>"Ouvir"</em> para escutar a pronúncia.</li>
                 <li>Toca em <em>"Explicar"</em> para ver cada palavra explicada.</li>
                 <li>Na secção <em>Descobrir</em>, tens a palavra do dia e dicas para aprender inglês.</li>
+                <li>O número laranja ao lado do meu nome mostra quantas mensagens novas tenho para ti.</li>
             </ul>
             <p lang="pt">Não tenhas medo de errar — é assim que se aprende. Estou aqui contigo. 💛</p>
             <hr>
-            <p class="en-translation"><em>(In English: Welcome message for Nwety explaining how the app works and encouraging her to use it without fear of mistakes.)</em></p>
+            <p class="en-translation"><em>(In English: Welcome message for Nwety explaining how the app works.)</em></p>
         </div>
     </div>
 </div>
 
 <script>
-(async () => {
-    const res = await fetch('/api/users');
-    const users = await res.json();
+async function loadHome() {
+    const [usersRes, unreadRes] = await Promise.all([
+        fetch('/api/users'),
+        fetch('/api/chat/unread-counts'),
+    ]);
+    const users = await usersRes.json();
+    const unread = await unreadRes.json();
+
     const picker = document.getElementById('user-picker');
     picker.innerHTML = '';
     users.forEach((u, i) => {
         const initial = u.name[0].toUpperCase();
         const langLabel = u.language === 'en' ? 'English speaker' : 'Fala português';
         const avatarClass = i === 1 ? 'user-avatar accent' : 'user-avatar';
+        const count = unread[String(u.id)] || 0;
+        const badge = count > 0
+            ? `<span class="unread-badge">${count > 99 ? '99+' : count}</span>`
+            : '';
+
         const card = document.createElement('a');
         card.href = `/chat/${u.id}`;
         card.className = 'user-card';
         card.innerHTML = `
-            <div class="${avatarClass}">${initial}</div>
+            <div class="${avatarClass}">${initial}${badge}</div>
             <div class="user-info">
                 <strong>${u.name}</strong>
                 <span>${langLabel}</span>
@@ -59,11 +70,14 @@
         `;
         picker.appendChild(card);
     });
+}
 
-    const modal = document.getElementById('welcome-modal');
-    document.getElementById('welcome-btn').onclick = () => modal.hidden = false;
-    document.getElementById('welcome-close').onclick = () => modal.hidden = true;
-    modal.onclick = (e) => { if (e.target === modal) modal.hidden = true; };
-})();
+loadHome();
+setInterval(loadHome, 10000);  // refresh every 10s while home is open
+
+const modal = document.getElementById('welcome-modal');
+document.getElementById('welcome-btn').onclick = () => modal.hidden = false;
+document.getElementById('welcome-close').onclick = () => modal.hidden = true;
+modal.onclick = (e) => { if (e.target === modal) modal.hidden = true; };
 </script>
 {% endblock %}

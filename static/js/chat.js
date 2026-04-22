@@ -228,8 +228,18 @@ micBtn.addEventListener('click', () => {
         () => micBtn.classList.remove('listening'));
 });
 
+async function markAsRead() {
+    try {
+        await fetch(`/api/chat/mark-read/${userId}`, { method: 'POST' });
+    } catch { /* non-fatal */ }
+}
+
 (async () => {
     await loadUsers();
     await loadMessages();
-    setInterval(loadMessages, 5000);
+    await markAsRead();
+    setInterval(async () => {
+        await loadMessages();
+        await markAsRead();
+    }, 5000);
 })();

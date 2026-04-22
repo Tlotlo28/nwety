@@ -36,7 +36,14 @@ async def _seed_users() -> None:
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    """Run once on startup: create tables and seed users."""
+    """Startup: optionally reset DB (one-shot for schema changes), seed users."""
+    if os.getenv("RESET_DB_ON_START", "").lower() == "true":
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.drop_all)
+        # Print loud so it's obvious in logs
+        print("⚠ RESET_DB_ON_START=true — dropped all tables. "
+              "Set this to 'false' in Render after deploy succeeds.")
+
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     await _seed_users()

@@ -1,25 +1,25 @@
 """Translation and language breakdown service.
 
-Memory-tuned for Render's 512 MB free tier:
-  - spaCy loaded with unused pipeline components disabled
-  - Per-word breakdown uses a single batched Argos call instead of N calls
-  - Translation cache keeps repeat queries free
+Tuned to fit Render's 512 MB ceiling:
+  - Only ONE spaCy model loaded at a time (swap on language change)
+  - Argos translator with cached results
+  - Per-word breakdown uses a single batched call
+  - Optional contextual hint to disambiguate verbs (love -> amar, not amor)
 """
 from __future__ import annotations
 
+import gc
 import logging
+import threading
 from functools import lru_cache
 
 import argostranslate.package
 import argostranslate.translate
-import spacy
-from spacy.language import Language
 
 log = logging.getLogger(__name__)
 
 
 def _ensure_argos_packages() -> None:
-    """Install en↔pt language packs on first boot."""
     installed = {
         (p.from_code, p.to_code)
         for p in argostranslate.package.get_installed_packages()
@@ -36,19 +36,37 @@ def _ensure_argos_packages() -> None:
         if (pkg.from_code, pkg.to_code) in missing:
             path = pkg.download()
             argostranslate.package.install_from_path(path)
-            log.info("Installed %s -> %s", pkg.from_code, pkg.to_code)
 
 
 _ensure_argos_packages()
 
-# Disable spaCy components we don't use. We only need the tokenizer, POS
-# tagger, and lemmatizer — skipping NER and parser cuts memory noticeably.
+# Single-slot spaCy model cache. We keep at most one loaded at a time.
+_nlp_lock = threading.Lock()
+_current_nlp = {"language": None, "model": None}
 _DISABLED_PIPES = ["ner", "parser", "attribute_ruler"]
 
-_nlp_models: dict[str, Language] = {
-    "en": spacy.load("en_core_web_sm", disable=_DISABLED_PIPES),
-    "pt": spacy.load("pt_core_news_sm", disable=_DISABLED_PIPES),
-}
+
+def _get_nlp(language: str):
+    """Return the spaCy model for `language`, swapping in if needed."""
+    with _nlp_lock:
+        if _current_nlp["language"] == language and _current_nlp["model"] is not None:
+            return _current_nlp["model"]
+
+        # Drop the previous model (if any) before loading the new one
+        if _current_nlp["model"] is not None:
+            log.info("Unloading spaCy %s to make room for %s",
+                     _current_nlp["language"], language)
+            _current_nlp["model"] = None
+            _current_nlp["language"] = None
+            gc.collect()
+
+        import spacy  # local import keeps it out of memory until first use
+        model_name = "en_core_web_sm" if language == "en" else "pt_core_news_sm"
+        log.info("Loading spaCy model %s", model_name)
+        _current_nlp["model"] = spacy.load(model_name, disable=_DISABLED_PIPES)
+        _current_nlp["language"] = language
+        return _current_nlp["model"]
+
 
 POS_LABELS_EN = {
     "NOUN": "noun", "VERB": "verb", "ADJ": "adjective", "ADV": "adverb",
@@ -67,84 +85,64 @@ POS_LABELS_PT = {
     "SYM": "símbolo", "X": "outro", "SPACE": "espaço",
 }
 
-# Sentinel used to safely split batched translation output back into words
 _SEP = "\n|||\n"
 
 
-@lru_cache(maxsize=5000)
+@lru_cache(maxsize=3000)
 def _translate_cached(text: str, from_code: str, to_code: str) -> str:
     return argostranslate.translate.translate(text, from_code, to_code)
 
 
 def translate(text: str, from_code: str, to_code: str) -> str:
-    """Translate text between 'en' and 'pt'. Results cached in memory."""
     if from_code == to_code:
         return text
     return _translate_cached(text, from_code, to_code)
 
 
 def _batch_translate_words(words: list[str], from_code: str, to_code: str) -> list[str]:
-    """Translate a list of words in a single Argos call.
-
-    Joins with a sentinel, translates once, splits back. Dramatically cheaper
-    than calling Argos once per word. Falls back to per-word on failure.
-    """
     if not words:
         return []
     if from_code == to_code:
         return list(words)
 
-    # Cache hits first — skip anything we already have
-    uncached_indices = []
-    results: list[str | None] = [None] * len(words)
-    for i, w in enumerate(words):
-        key = (w, from_code, to_code)
-        cached = _translate_cached.__wrapped__ if False else None  # placeholder
-        # Use the lru_cache directly via the cache_info protocol is tricky;
-        # simplest correct approach: just call _translate_cached which is cached.
-        # But we want to batch the *uncached* ones. So we do a cheap membership
-        # test using the underlying cache dict isn't reliable — instead we just
-        # batch everything; lru_cache handles duplicates within the batch
-        # naturally on the NEXT breakdown.
-        uncached_indices.append(i)
-
-    to_translate = [words[i] for i in uncached_indices]
-    joined = _SEP.join(to_translate)
-
+    joined = _SEP.join(words)
     try:
         translated_joined = argostranslate.translate.translate(joined, from_code, to_code)
-        translated_parts = translated_joined.split(_SEP)
+        parts = translated_joined.split(_SEP)
     except Exception as exc:  # noqa: BLE001
-        log.warning("Batched translation failed, falling back: %s", exc)
-        translated_parts = [translate(w, from_code, to_code) for w in to_translate]
+        log.warning("Batched translation failed: %s", exc)
+        parts = [translate(w, from_code, to_code) for w in words]
 
-    # If split count mismatches (Argos sometimes munges separators on short input),
-    # fall back to individual translations for this batch.
-    if len(translated_parts) != len(to_translate):
-        log.info("Batched split mismatch (%d vs %d), using per-word fallback",
-                 len(translated_parts), len(to_translate))
-        translated_parts = [translate(w, from_code, to_code) for w in to_translate]
+    if len(parts) != len(words):
+        parts = [translate(w, from_code, to_code) for w in words]
 
-    for idx, translated in zip(uncached_indices, translated_parts):
-        results[idx] = translated.strip() if translated else words[idx]
+    return [(p.strip() if p else words[i]) for i, p in enumerate(parts)]
 
-    return [r if r is not None else "" for r in results]
+
+def _contextualise(word: str, pos: str, language: str) -> str:
+    """Add a tiny grammatical hint so verbs translate as verbs, not nouns."""
+    if language == "en" and pos in ("verb", "auxiliary verb"):
+        return f"to {word}"
+    return word
+
+
+def _strip_context(translated: str, original_context: str, language: str) -> str:
+    """Strip the contextual prefix back out of the translation."""
+    if language == "en" and original_context.startswith("to "):
+        for prefix in ("para ", "a ", "de "):
+            if translated.lower().startswith(prefix):
+                return translated[len(prefix):].strip()
+    return translated.strip()
 
 
 def break_down(text: str, language: str) -> list[dict]:
-    """Split text into tokens with linguistic info for learning."""
-    nlp = _nlp_models.get(language)
-    if nlp is None:
-        return []
-
+    nlp = _get_nlp(language)
     other_language = "pt" if language == "en" else "en"
     pos_labels = POS_LABELS_EN if language == "en" else POS_LABELS_PT
 
     doc = nlp(text)
-
-    # First pass: collect tokens and the lemmas we need to translate
     raw_tokens = []
-    lemmas_to_translate: list[str] = []
+    contexts: list[str] = []
     for tok in doc:
         if tok.is_space:
             continue
@@ -156,28 +154,30 @@ def break_down(text: str, language: str) -> list[dict]:
             })
             continue
         lemma = tok.lemma_.lower()
+        pos_label = pos_labels.get(tok.pos_, tok.pos_.lower())
         raw_tokens.append({
-            "word": tok.text, "lemma": lemma,
-            "pos": pos_labels.get(tok.pos_, tok.pos_.lower()),
-            "translation": None,  # filled below
-            "is_punct": False,
+            "word": tok.text, "lemma": lemma, "pos": pos_label,
+            "translation": None, "is_punct": False,
         })
-        lemmas_to_translate.append(lemma)
+        contexts.append(_contextualise(lemma, pos_label, language))
 
-    # Second pass: batch-translate all non-punct lemmas in a single Argos call
-    translations = _batch_translate_words(lemmas_to_translate, language, other_language)
+    translations = _batch_translate_words(contexts, language, other_language)
+    cleaned = [
+        _strip_context(t, c, language)
+        for t, c in zip(translations, contexts)
+    ]
 
-    # Stitch translations back in
-    t_iter = iter(translations)
+    t_iter = iter(cleaned)
     for tok in raw_tokens:
         if not tok["is_punct"]:
             tok["translation"] = next(t_iter, tok["lemma"])
 
+    del doc
+    gc.collect()
     return raw_tokens
 
 
 def process_message(text: str, from_language: str) -> dict:
-    """Full pipeline kept for backwards compatibility / debugging."""
     to_language = "pt" if from_language == "en" else "en"
     translated = translate(text, from_language, to_language)
     return {

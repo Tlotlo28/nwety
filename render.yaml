@@ -21,7 +21,7 @@ services:
       - key: DEBUG
         value: "False"
       - key: DATABASE_URL
-        value: sqlite+aiosqlite:////tmp/nwety.db
+        value: sqlite+aiosqlite:////var/data/nwety.db
       - key: USER_ONE_NAME
         sync: false  # prompt to set this in the Render dashboard
       - key: USER_ONE_LANGUAGE
@@ -34,3 +34,5 @@ services:
         generateValue: true
       - key: PYTHONUNBUFFERED
         value: "1"
+      - key: RESET_DB_ON_START
+        value: "true"

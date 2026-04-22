@@ -12,18 +12,19 @@ class Message(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     sender_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
 
-    # Original text as typed, plus its language
     original_text: Mapped[str] = mapped_column(Text)
     original_language: Mapped[str] = mapped_column(String(5))
 
-    # Translated text in the other person's language
     translated_text: Mapped[str] = mapped_column(Text)
     translated_language: Mapped[str] = mapped_column(String(5))
 
-    # Word-by-word breakdown for language learning (stored as JSON)
     breakdown: Mapped[list] = mapped_column(JSON, default=list)
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),
+    )
+    # NULL until the recipient has actually opened the chat after this was sent
+    read_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True, default=None,
     )
