@@ -32,6 +32,12 @@
     --radius-pill: 999px;
 }
 
+html, body, .topbar, .bottom-nav, .user-card, .card, .message,
+.composer, .composer textarea, .composer button,
+.welcome-card, .breakdown-panel, .token, .toast {
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -549,7 +555,7 @@ a {
 .welcome-modal {
     position: fixed;
     inset: 0;
-    background: rgba(45, 42, 38, 0.45);
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -649,4 +655,73 @@ a {
 @keyframes badge-pop {
     from { transform: scale(0); }
     to { transform: scale(1); }
+}
+
+/* Theme toggle button — sits in topbars and on the home page */
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.topbar-actions a {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.theme-toggle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-muted);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.theme-toggle:hover {
+    background: var(--primary-tint);
+    color: var(--primary-dark);
+    transform: rotate(15deg);
+}
+.theme-toggle:active {
+    transform: rotate(180deg);
+}
+
+/* On the home page the toggle floats in the top-right corner */
+.home-corner {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+}
+.home {
+    position: relative;
+}
+/* ============================================================
+   Dark theme — overrides the :root variables when [data-theme="dark"]
+   is set on the <html> element. Component CSS doesn't change at all.
+   ============================================================ */
+[data-theme="dark"] {
+    --bg: #1A1816;
+    --bg-elevated: #252220;
+    --primary: #8DB5AC;
+    --primary-dark: #A4C9C0;
+    --primary-tint: #2A3833;
+    --accent: #E09A75;
+    --accent-dark: #EDB592;
+    --accent-tint: #3A2D24;
+    --text: #F1ECE4;
+    --text-muted: #A8A29A;
+    --text-faint: #6E6862;
+    --border: #3A3530;
+    --amber: #D4AB54;
+    --shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    --shadow-lift: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+/* Smooth transition when switching themes — feels intentional, not jarring */
+html, body, .topbar, .bottom-nav, .user-card, .card, .message,
+.composer, .composer textarea, .composer button,
+.welcome-card, .breakdown-panel, .token, .toast {
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
 }

@@ -6,7 +6,10 @@
         <h1 id="page-title">…</h1>
         <div class="who" id="page-subtitle">…</div>
     </div>
-    <a href="/" style="color: var(--text-muted); font-size: 13px;" id="switch-link">Switch</a>
+    <div class="topbar-actions">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button>
+        <a href="/" id="switch-link">Switch</a>
+    </div>
 </div>
 
 <div class="discover" id="discover">
@@ -17,7 +20,9 @@
     <a href="/chat/{{ user_id }}" id="nav-chat">Chat</a>
     <a href="/discover/{{ user_id }}" class="active" id="nav-discover">Discover</a>
 </div>
+{% endblock %}
 
+{% block scripts %}
 <script>
 window.CURRENT_USER_ID = Number("{{ user_id }}");
 </script>

@@ -29,6 +29,13 @@ const CHAT_LABELS = {
         emptySub: "Whatever you type will be translated instantly.",
         placeholder: "Type in English…",
         sendErr: "Could not send — check your connection.",
+        breakingDown: "Breaking it down…",
+        breakdownErr: "Could not load breakdown.",
+        delete: "Delete",
+        confirmDelete: "Delete this message? This will remove it for both of you.",
+        deleted: "Message deleted",
+        undo: "Undo",
+        deleteErr: "Could not delete — try again.",
     },
     pt: {
         who: (me, other) => `És a ${me} — a conversar com ${other}`,
@@ -39,9 +46,65 @@ const CHAT_LABELS = {
         emptySub: "O que escreveres será traduzido na hora.",
         placeholder: "Escreve em português…",
         sendErr: "Não foi possível enviar — verifica a tua ligação.",
+        breakingDown: "A explicar…",
+        breakdownErr: "Não foi possível explicar a frase.",
+        delete: "Apagar",
+        confirmDelete: "Apagar esta mensagem? Vai desaparecer para os dois.",
+        deleted: "Mensagem apagada",
+        undo: "Anular",
+        deleteErr: "Não foi possível apagar — tenta de novo.",
     },
 };
 let LBL = CHAT_LABELS.en;
+
+// In-memory snapshot of recently-deleted messages so we can undo
+const recentlyDeleted = new Map();
+
+function showToast(message, actionLabel, onAction) {
+    // Remove any existing toast
+    document.querySelector('.toast')?.remove();
+
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `
+        <span>${message}</span>
+        ${actionLabel ? `<button class="toast-action">${actionLabel}</button>` : ''}
+    `;
+    document.body.appendChild(toast);
+
+    if (actionLabel && onAction) {
+        toast.querySelector('.toast-action').onclick = () => {
+            onAction();
+            toast.remove();
+        };
+    }
+
+    // Auto-dismiss after 5s
+    setTimeout(() => toast.remove(), 5000);
+}
+
+async function deleteMessage(message, element) {
+    if (!confirm(LBL.confirmDelete)) return;
+
+    const parent = element.parentNode;
+    const nextSibling = element.nextSibling;
+    element.remove();
+    renderedIds.delete(message.id);
+
+    try {
+        const res = await fetch(`/api/chat/messages/${message.id}?user_id=${userId}`, {
+            method: 'DELETE',
+        });
+        if (!res.ok) throw new Error('Failed');
+        showToast(LBL.deleted);
+    } catch {
+        if (nextSibling) parent.insertBefore(element, nextSibling);
+        else parent.appendChild(element);
+        renderedIds.add(message.id);
+        alert(LBL.deleteErr);
+    }
+}
+
 
 async function loadUsers() {
     const res = await fetch('/api/users');
@@ -97,25 +160,14 @@ function renderMessage(m) {
     div.innerHTML = `
         <div class="original">${primary}</div>
         <div class="translated">${secondary}</div>
-        <div class="tools">
+         <div class="tools">
             <button class="speak">${Icons.speaker}<span>Pronounce</span></button>
             <button class="learn">${Icons.book}<span>Break down</span></button>
+            <button class="delete-btn" aria-label="${LBL.delete}">${Icons.trash}<span>${LBL.delete}</span></button>
         </div>
         <div class="breakdown-panel"></div>
         <div class="time">${formatTime(m.created_at)}</div>
     `;
-    const CHAT_LABELS = {
-    en: {
-        // ... existing keys
-        breakingDown: "Breaking it down…",
-        breakdownErr: "Could not load breakdown.",
-    },
-    pt: {
-        // ... existing keys
-        breakingDown: "A explicar…",
-        breakdownErr: "Não foi possível explicar a frase.",
-    },
-};
     const speakText = isMine ? m.translated_text : m.original_text;
     const speakLang = isMine ? m.translated_language : m.original_language;
     div.querySelector('.speak').onclick = () => Speech.speak(speakText, speakLang);
@@ -137,7 +189,7 @@ function renderMessage(m) {
             panel.innerHTML = `<em style="color: var(--amber); font-size: 13px;">${LBL.breakdownErr}</em>`;
         }
     };
-
+    div.querySelector('.delete-btn').onclick = () => deleteMessage(m, div);
     return div;
 }
 

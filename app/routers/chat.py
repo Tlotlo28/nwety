@@ -111,3 +111,23 @@ async def mark_messages_read(user_id: int, db: AsyncSession = Depends(get_sessio
     )
     await db.commit()
     return {"status": "ok", "marked_at": now.isoformat()}
+
+@router.delete("/messages/{message_id}")
+async def delete_message(
+    message_id: int,
+    user_id: int = Query(...),
+    db: AsyncSession = Depends(get_session),
+):
+    """Delete a message. In a 2-person family app, either person can delete
+    any message — we're not building Slack here."""
+    user = await db.get(User, user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    message = await db.get(Message, message_id)
+    if message is None:
+        raise HTTPException(status_code=404, detail="Message not found")
+
+    await db.delete(message)
+    await db.commit()
+    return {"status": "deleted", "id": message_id}
